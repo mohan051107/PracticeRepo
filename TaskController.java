@@ -1,6 +1,9 @@
+
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class TaskController {
 
@@ -54,7 +57,7 @@ public class TaskController {
 
                 Task task = new Task();
 
-                task.setId(rs.getInt("id"));
+                task.setTaskId(rs.getInt("id"));
                 task.setTitle(rs.getString("title"));
                 task.setDescription(rs.getString("description"));
                 task.setDueDate(rs.getDate("due_date").toLocalDate());
@@ -90,7 +93,7 @@ public class TaskController {
 
                 Task task = new Task();
 
-                task.setId(rs.getInt("id"));
+                task.setTaskId(rs.getInt("id"));
                 task.setTitle(rs.getString("title"));
                 task.setDescription(rs.getString("description"));
                 task.setDueDate(rs.getDate("due_date").toLocalDate());
@@ -122,7 +125,7 @@ public class TaskController {
             ps.setString(2, task.getDescription());
             ps.setDate(3, Date.valueOf(task.getDueDate()));
             ps.setString(4, task.getStatus());
-            ps.setInt(5, task.getId());
+            ps.setInt(5, task.getTaskId());
 
             int rows = ps.executeUpdate();
 
@@ -204,7 +207,7 @@ public class TaskController {
 
                 Task task = new Task();
 
-                task.setId(rs.getInt("id"));
+                task.setTaskId(rs.getInt("id"));
                 task.setTitle(rs.getString("title"));
                 task.setDescription(rs.getString("description"));
                 task.setDueDate(rs.getDate("due_date").toLocalDate());
