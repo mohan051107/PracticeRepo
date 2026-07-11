@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Task Manager · Dashboard</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <style>
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --primary-bg: #eff6ff;
+            
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            --green: #22c55e;
+            --green-bg: #dcfce7;
+            --orange: #f59e0b;
+            --orange-bg: #fef3c7;
+            --red: #ef4444;
+            --red-bg: #fee2e2;
+            --purple: #8b5cf6;
+            --purple-bg: #ede9fe;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            --radius: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           DASHBOARD WRAPPER
+           ============================================ */
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           SIDEBAR
+           ============================================ */
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            margin-bottom: 32px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .sidebar-brand i {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .sidebar-brand span span {
+            color: var(--primary);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            position: relative;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .nav-item i {
+            width: 20px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .nav-item.active {
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--gray-200);
+            padding-top: 16px;
+            margin-top: 8px;
+        }
+
+        /* ============================================
+           MAIN CONTENT
+           ============================================ */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 24px 32px 32px;
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           TOP HEADER
+           ============================================ */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0 20px;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .header-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 40px;
+            padding: 8px 18px;
+            min-width: 280px;
+            transition: var(--transition);
+        }
+
+        .header-search:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .header-search i {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+        }
+
+        .header-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 0.95rem;
+            color: var(--gray-800);
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .header-search input::placeholder {
+            color: var(--gray-400);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            padding: 8px 10px;
+            border-radius: var(--radius);
+            color: var(--gray-600);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 12px 4px 4px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background: var(--gray-100);
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* ============================================
+           WELCOME SECTION
+           ============================================ */
+        .welcome-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .welcome-text h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            letter-spacing: -0.02em;
+        }
+
+        .welcome-text p {
+            color: var(--gray-500);
+            font-size: 1rem;
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+            padding: 8px 20px;
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        /* ============================================
+           STATS GRID
+           ============================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px 24px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue {
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        .stat-icon.orange {
+            background: var(--orange-bg);
+            color: var(--orange);
+        }
+
+        .stat-icon.green {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .stat-icon.purple {
+            background: var(--purple-bg);
+            color: var(--purple);
+        }
+
+        .stat-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--gray-500);
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+
+        .stat-sub {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* ============================================
+           DASHBOARD GRID (Tasks + Upcoming)
+           ============================================ */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* ============================================
+           TASK PANEL
+           ============================================ */
+        .task-panel,
+        .upcoming-panel {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            padding: 24px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .panel-title h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .panel-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-count {
+            background: var(--gray-100);
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .icon-btn-sm {
+            background: none;
+            border: 1px solid var(--gray-200);
+            padding: 6px 10px;
+            border-radius: var(--radius);
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .icon-btn-sm:hover {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        /* ============================================
+           TASK LIST
+           ============================================ */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 460px;
+            overflow-y: auto;
+        }
+
+        .task-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .task-list::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .task-list::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 10px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-radius: var(--radius);
+            background: var(--gray-50);
+            border: 1px solid transparent;
+            transition: var(--transition);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .task-item:hover {
+            background: var(--primary-bg);
+            border-color: var(--primary-light);
+        }
+
+        .task-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .task-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid var(--gray-300);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+            font-size: 0.7rem;
+            color: white;
+        }
+
+        .task-check:hover {
+            border-color: var(--primary);
+        }
+
+        .task-check.completed {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .task-title {
+            font-weight: 500;
+            color: var(--gray-900);
+            font-size: 0.95rem;
+        }
+
+        .task-subject {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--gray-500);
+            background: var(--gray-200);
+            padding: 2px 12px;
+            border-radius: 40px;
+            margin-left: 6px;
+        }
+
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .task-due {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            background: var(--gray-200);
+            padding: 4px 14px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .task-due i {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+        }
+
+        .task-due.urgent {
+            background: var(--red-bg);
+            color: var(--red);
+        }
+
+        .task-due.urgent i {
+            color: var(--red);
+        }
+
+        .task-status {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            padding: 4px 14px;
+            border-radius: 40px;
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        .task-status.done {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .task-status.in-progress {
+            background: var(--orange-bg);
+            color: var(--orange);
+        }
+
+        .task-delete {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .task-delete:hover {
+            background: var(--red-bg);
+            color: var(--red);
+        }
+
+        .panel-footer {
+            border-top: 1px solid var(--gray-200);
+            padding-top: 16px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        /* ============================================
+           UPCOMING PANEL
+           ============================================ */
+        .upcoming-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .upcoming-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .upcoming-item:hover {
+            background: var(--gray-50);
+        }
+
+        .upcoming-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-bg);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .upcoming-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .upcoming-title {
+            font-weight: 500;
+            color: var(--gray-900);
+            font-size: 0.95rem;
+        }
+
+        .upcoming-detail {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            display: flex;
+            gap: 12px;
+            margin-top: 2px;
+        }
+
+        .upcoming-detail i {
+            width: 16px;
+            color: var(--gray-400);
+        }
+
+        .upcoming-badge {
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: var(--gray-200);
+            padding: 4px 14px;
+            border-radius: 40px;
+            color: var(--gray-600);
+            flex-shrink: 0;
+        }
+
+        .upcoming-badge.soon {
+            background: var(--red-bg);
+            color: var(--red);
+        }
+
+        /* ============================================
+           QUICK ACTIONS
+           ============================================ */
+        .quick-actions {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .quick-actions h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--gray-500);
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            padding: 6px 16px;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+
+        .quick-btn:hover {
+            background: var(--gray-200);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .dashboard-footer {
+            border-top: 1px solid var(--gray-200);
+            padding-top: 20px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* ============================================
+           MODAL
+           ============================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: modalSlideIn 0.2s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--gray-900);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            margin-bottom: 4px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: var(--transition);
+            background: var(--gray-50);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .header-search {
+                min-width: 200px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-search {
+                min-width: 150px;
+            }
+
+            .welcome-text h1 {
+                font-size: 1.4rem;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+
+        /* Sidebar overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 99;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--gray-300);
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================ -->
+    <!-- SIDEBAR OVERLAY (mobile)                     -->
+    <!-- ============================================ -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================ -->
+    <!-- DASHBOARD WRAPPER                            -->
+    <!-- ============================================ -->
+    <div class="dashboard-wrapper">
+        
+        <!-- ========================================== -->
+        <!-- SIDEBAR                                     -->
+        <!-- ========================================== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-tasks"></i>
+                <span>Task<span>Hub</span></span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-page="tasks">
+                    <i class="fas fa-list-check"></i>
+                    <span>My Tasks</span>
+                    <span class="nav-badge" id="taskCountBadge">8</span>
+                </button>
+                <button class="nav-item" data-page="calendar">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>Calendar</span>
+                </button>
+                <button class="nav-item" data-page="team">
+                    <i class="fas fa-users"></i>
+                    <span>Team</span>
+                </button>
+                <button class="nav-item" data-page="analytics">
+                    <i class="fas fa-chart-simple"></i>
+                    <span>Analytics</span>
+                </button>
+                <button class="nav-item" data-page="settings">
+                    <i class="fas fa-gear"></i>
+                    <span>Settings</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="nav-item" id="logoutBtn">
+                    <i class="fas fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- ========================================== -->
+        <!-- MAIN CONTENT                               -->
+        <!-- ========================================== -->
+        <main class="main-content">
+            
+            <!-- ===== TOP HEADER ===== -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="header-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search tasks, subjects..." />
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <button class="icon-btn" title="Notifications" id="notifBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    <button class="icon-btn" title="Messages">
+                        <i class="fas fa-envelope"></i>
+                    </button>
+                    <div class="user-profile">
+                        <img src="https://ui-avatars.com/api/?name=Alex+Rivera&background=2563eb&color=fff&size=40&bold=true" alt="Alex Rivera" />
+                        <div class="user-info">
+                            <span class="user-name">Alex Rivera</span>
+                            <span class="user-role">Computer Science · Y3</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- ===== WELCOME SECTION ===== -->
+            <section class="welcome-section">
+                <div class="welcome-text">
+                    <h1 id="greetingText">Good Morning, Alex 👋</h1>
+                    <p>Here's what's happening with your tasks today.</p>
+                </div>
+                <div class="welcome-actions">
+                    <button class="btn-primary" id="addTaskBtn">
+                        <i class="fas fa-plus"></i> Add New Task
+                    </button>
+                </div>
+            </section>
+            
+            <!-- ===== STATS CARDS ===== -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-list-ul"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Total Tasks</span>
+                        <span class="stat-value" id="totalTasks">0</span>
+                        <span class="stat-sub" id="totalSub">0 active · 0 completed</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Due This Week</span>
+                        <span class="stat-value" id="dueThisWeek">0</span>
+                        <span class="stat-sub" id="dueSub">0 are urgent</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Completed</span>
+                        <span class="stat-value" id="completedTasks">0</span>
+                        <span class="stat-sub" id="completedSub">+0 this week</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Active Courses</span>
+                        <span class="stat-value" id="activeCourses">4</span>
+                        <span class="stat-sub">This semester</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ===== TASKS & UPCOMING GRID ===== -->
+            <div class="dashboard-grid">
+                
+                <!-- TASK LIST -->
+                <section class="task-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-pen-fancy"></i>
+                            <h3>My Tasks</h3>
+                        </div>
+                        <div class="panel-actions">
+                            <span class="badge-count" id="activeTaskCount">0 active</span>
+                            <button class="icon-btn-sm" id="filterBtn" title="Filter">
+                                <i class="fas fa-sliders"></i>
+                            </button>
+                            <button class="icon-btn-sm" id="sortBtn" title="Sort">
+                                <i class="fas fa-arrow-up-wide-short"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-list" id="taskList">
+                        <!-- Tasks will be rendered by JavaScript -->
+                    </div>
+                    
+                    <div class="panel-footer">
+                        <button class="btn-secondary" id="viewAllTasks">
+                            View All Tasks <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- UPCOMING & DEADLINES -->
+                <aside class="upcoming-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-hourglass-half"></i>
+                            <h3>Upcoming Deadlines</h3>
+                        </div>
+                        <span class="badge-count" id="upcomingCount">next 3</span>
+                    </div>
+                    
+                    <div class="upcoming-list" id="upcomingList">
+                        <!-- Upcoming items rendered by JavaScript -->
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h4>Quick Actions</h4>
+                        <div class="action-buttons">
+                            <button class="quick-btn" id="exportBtn">
+                                <i class="fas fa-file-export"></i> Export
+                            </button>
+                            <button class="quick-btn" id="printBtn">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="quick-btn" id="shareBtn">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+                
+            </div>
+            
+            <!-- ===== FOOTER ===== -->
+            <footer class="dashboard-footer">
+                <span>© 2026 StudentTaskHub · Hackathon Edition</span>
+                <span>
+                    <i class="fas fa-circle" style="color: #22c55e; font-size: 0.5rem; vertical-align: middle;"></i>
+                    System Online · Last Sync: <span id="lastSync">just now</span>
+                </span>
+            </footer>
+            
+        </main>
+        
+    </div>
+    
+    <!-- ============================================ -->
+    <!-- MODAL: ADD/EDIT TASK                         -->
+    <!-- ============================================ -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Task</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskTitleInput">Task Title *</label>
+                    <input type="text" id="taskTitleInput" placeholder="Enter task title..." required />
+                </div>
+                <div class="form-group">
+                    <label for="taskSubjectInput">Subject</label>
+                    <input type="text" id="taskSubjectInput" placeholder="e.g., CS450" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskDueInput">Due Date</label>
+                        <input type="date" id="taskDueInput" />
+                    </div>
+                    <div class="form-group">
+                        <label for="taskStatusInput">Status</label>
+                        <select id="taskStatusInput">
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" id="editTaskId" value="" />
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="modalCancel">Cancel</button>
+                    <button type="submit" class="btn-primary" id="modalSave">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- JAVASCRIPT                                   -->
+    <!-- ============================================ -->
+    <script>
+        // ============================================
+        // DATA STORE
+        // ============================================
+        let tasks = [];
+        let editingId = null;
+        let currentFilter = 'all'; // all, pending, in-progress, completed
+        
+        // ============================================
+        // INITIAL DATA (Fake Data)
+        // ============================================
+        const initialTasks = [
+            {
+                id: 1,
+                title: 'Odoo Hackathon prep',
+                subject: 'CS450',
+                dueDate: '2026-04-11',
+                status: 'completed'
+            },
+            {
+                id: 2,
+                title: 'Dashboard UI design',
+                subject: 'HCI',
+                dueDate: '2026-04-12',
+                status: 'in-progress'
+            },
+            {
+                id: 3,
+                title: 'Database schema review',
+                subject: 'DBMS',
+                dueDate: '2026-04-14',
+                status: 'pending'
+            },
+            {
+                id: 4,
+                title: 'Backend API draft',
+                subject: 'SWE',
+                dueDate: '2026-04-09',
+                status: 'completed'
+            },
+            {
+                id: 5,
+                title: 'Midterm presentation',
+                subject: 'CS450',
+                dueDate: '2026-04-13',
+                status: 'in-progress'
+            },
+            {
+                id: 6,
+                title: 'Group meeting',
+                subject: 'HCI',
+                dueDate: '2026-04-15',
+                status: 'pending'
+            },
+            {
+                id: 7,
+                title: 'Research paper draft',
+                subject: 'ENG101',
+                dueDate: '2026-04-18',
+                status: 'pending'
+            },
+            {
+                id: 8,
+                title: 'Lab report submission',
+                subject: 'PHYS201',
+                dueDate: '2026-04-10',
+                status: 'completed'
+            }
+        ];
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function generateId() {
+            return Date.now() + Math.floor(Math.random() * 1000);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'No date';
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function isUrgent(dateStr) {
+            if (!dateStr) return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const due = new Date(dateStr + 'T00:00:00');
+            const diff = (due - today) / (1000 * 60 * 60 * 24);
+            return diff >= 0 && diff <= 2;
+        }
+
+        function isDueThisWeek(dateStr) {
+            if (!dateStr) return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const due = new Date(dateStr + 'T00:00:00');
+            const diff = (due - today) / (1000 * 60 * 60 * 24);
+            return diff >= 0 && diff <= 7;
+        }
+
+        function getStatusBadge(status) {
+            const map = {
+                'completed': 'done',
+                'in-progress': 'in-progress',
+                'pending': 'pending'
+            };
+            return map[status] || 'pending';
+        }
+
+        function getStatusLabel(status) {
+            const map = {
+                'completed': 'Done',
+                'in-progress': 'In Progress',
+                'pending': 'Pending'
+            };
+            return map[status] || status;
+        }
+
+        function getGreeting() {
+            const hour = new Date().getHours();
+            if (hour < 12) return 'Good Morning';
+            if (hour < 17) return 'Good Afternoon';
+            return 'Good Evening';
+        }
+
+        // ============================================
+        // RENDER FUNCTIONS
+        // ============================================
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            const filtered = getFilteredTasks();
+            
+            if (filtered.length === 0) {
+                taskList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No tasks found. Create your first task!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            taskList.innerHTML = filtered.map(task => `
+                <div class="task-item" data-id="${task.id}">
+                    <div class="task-info">
+                        <div class="task-check ${task.status === 'completed' ? 'completed' : ''}" 
+                             onclick="toggleTaskStatus(${task.id})">
+                            ${task.status === 'completed' ? '<i class="fas fa-check"></i>' : ''}
+                        </div>
+                        <div class="task-title">
+                            ${task.title}
+                            <span class="task-subject">${task.subject || 'General'}</span>
+                        </div>
+                    </div>
+                    <div class="task-meta">
+                        <span class="task-due ${isUrgent(task.dueDate) ? 'urgent' : ''}">
+                            <i class="far fa-calendar"></i> ${formatDate(task.dueDate)}
+                        </span>
+                        <span class="task-status ${getStatusBadge(task.status)}">
+                            ${getStatusLabel(task.status)}
+                        </span>
+                        <button class="task-delete" onclick="deleteTask(${task.id})" title="Delete task">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateStats();
+            updateCounts();
+        }
+
+        function renderUpcoming() {
+            const upcomingList = document.getElementById('upcomingList');
+            const upcoming = tasks
+                .filter(t => t.status !== 'completed' && t.dueDate)
+                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                .slice(0, 4);
+            
+            if (upcoming.length === 0) {
+                upcomingList.innerHTML = `
+                    <div class="empty-state" style="padding: 20px;">
+                        <p style="font-size: 0.9rem;">No upcoming deadlines 🎉</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const icons = ['fa-code', 'fa-file-alt', 'fa-users', 'fa-flask', 'fa-book', 'fa-pencil'];
+            
+            upcomingList.innerHTML = upcoming.map((task, index) => `
+                <div class="upcoming-item">
+                    <div class="upcoming-icon">
+                        <i class="fas ${icons[index % icons.length]}"></i>
+                    </div>
+                    <div class="upcoming-content">
+                        <div class="upcoming-title">${task.title}</div>
+                        <div class="upcoming-detail">
+                            <span><i class="far fa-calendar"></i> ${formatDate(task.dueDate)}</span>
+                            <span><i class="far fa-clock"></i> ${task.subject || 'General'}</span>
+                        </div>
+                    </div>
+                    <span class="upcoming-badge ${isUrgent(task.dueDate) ? 'soon' : ''}">
+                        ${isUrgent(task.dueDate) ? '🔴 soon' : 'upcoming'}
+                    </span>
+                </div>
+            `).join('');
+            
+            document.getElementById('upcomingCount').textContent = `next ${Math.min(upcoming.length, 4)}`;
+        }
+
+        function getFilteredTasks() {
+            let filtered = [...tasks];
+            
+            if (currentFilter === 'pending') {
+                filtered = filtered.filter(t => t.status === 'pending');
+            } else if (currentFilter === 'in-progress') {
+                filtered = filtered.filter(t => t.status === 'in-progress');
+            } else if (currentFilter === 'completed') {
+                filtered = filtered.filter(t => t.status === 'completed');
+            }
+            
+            // Search filter
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            if (searchTerm) {
+                filtered = filtered.filter(t => 
+                    t.title.toLowerCase().includes(searchTerm) || 
+                    (t.subject && t.subject.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            return filtered;
+        }
+
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.status === 'completed').length;
+            const active = total - completed;
+            const dueThisWeek = tasks.filter(t => t.status !== 'completed' && isDueThisWeek(t.dueDate)).length;
+            const urgent = tasks.filter(t => t.status !== 'completed' && isUrgent(t.dueDate)).length;
+            
+            document.getElementById('totalTasks').textContent = total;
+            document.getElementById('totalSub').textContent = `${active} active · ${completed} completed`;
+            
+            document.getElementById('dueThisWeek').textContent = dueThisWeek;
+            document.getElementById('dueSub').textContent = `${urgent} are urgent`;
+            
+            document.getElementById('completedTasks').textContent = completed;
+            
+            // Update completed this week (fake calculation)
+            const completedThisWeek = tasks.filter(t => 
+                t.status === 'completed' && isDueThisWeek(t.dueDate)
+            ).length;
+            document.getElementById('completedSub').textContent = `+${completedThisWeek} this week`;
+        }
+
+        function updateCounts() {
+            const active = tasks.filter(t => t.status !== 'completed').length;
+            document.getElementById('activeTaskCount').textContent = `${active} active`;
+            document.getElementById('taskCountBadge').textContent = active;
+        }
+
+        // ============================================
+        // CRUD OPERATIONS
+        // ============================================
+        function addTask(title, subject, dueDate, status) {
+            const task = {
+                id: generateId(),
+                title: title.trim(),
+                subject: subject.trim() || 'General',
+                dueDate: dueDate || '',
+                status: status || 'pending'
+            };
+            tasks.push(task);
+            saveToLocalStorage();
+            renderAll();
+        }
+
+        function updateTask(id, title, subject, dueDate, status) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.title = title.trim();
+                task.subject = subject.trim() || 'General';
+                task.dueDate = dueDate || '';
+                task.status = status || 'pending';
+                saveToLocalStorage();
+                renderAll();
+            }
+        }
+
+        function deleteTask(id) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveToLocalStorage();
+                renderAll();
+            }
+        }
+
+        function toggleTaskStatus(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.status = task.status === 'completed' ? 'pending' : 'completed';
+                saveToLocalStorage();
+                renderAll();
+            }
+        }
+
+        // ============================================
+        // LOCAL STORAGE
+        // ============================================
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('studentTasks', JSON.stringify(tasks));
+            } catch (e) {
+                console.warn('Could not save to localStorage');
+            }
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const data = localStorage.getItem('studentTasks');
+                if (data) {
+                    tasks = JSON.parse(data);
+                    return true;
+                }
+            } catch (e) {
+                console.warn('Could not load from localStorage');
+            }
+            return false;
+        }
+
+        // ============================================
+        // MODAL FUNCTIONS
+        // ============================================
+        function openModal(taskId = null) {
+            const modal = document.getElementById('taskModal');
+            const title = document.getElementById('modalTitle');
+            const form = document.getElementById('taskForm');
+            const titleInput = document.getElementById('taskTitleInput');
+            const subjectInput = document.getElementById('taskSubjectInput');
+            const dueInput = document.getElementById('taskDueInput');
+            const statusInput = document.getElementById('taskStatusInput');
+            const editIdInput = document.getElementById('editTaskId');
+            
+            form.reset();
+            editingId = null;
+            editIdInput.value = '';
+            
+            // Set default due date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            dueInput.value = tomorrow.toISOString().split('T')[0];
+            
+            if (taskId) {
+                const task = tasks.find(t => t.id === taskId);
+                if (task) {
+                    title.textContent = 'Edit Task';
+                    titleInput.value = task.title;
+                    subjectInput.value = task.subject || '';
+                    dueInput.value = task.dueDate || '';
+                    statusInput.value = task.status || 'pending';
+                    editIdInput.value = task.id;
+                    editingId = task.id;
+                }
+            } else {
+                title.textContent = 'Add New Task';
+                statusInput.value = 'pending';
+            }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').classList.remove('active');
+            document.body.style.overflow = '';
+            editingId = null;
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load data
+            const loaded = loadFromLocalStorage();
+            if (!loaded || tasks.length === 0) {
+                tasks = JSON.parse(JSON.stringify(initialTasks));
+                saveToLocalStorage();
+            }
+            
+            // Set greeting
+            document.getElementById('greetingText').textContent = `${getGreeting()}, Alex 👋`;
+            
+            // Render everything
+            renderAll();
+            
+            // Mobile toggle
+            document.getElementById('mobileToggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('open');
+                document.getElementById('sidebarOverlay').classList.toggle('active');
+            });
+            
+            document.getElementById('sidebarOverlay').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            });
+            
+            // Add task button
+            document.getElementById('addTaskBtn').addEventListener('click', function() {
+                openModal();
+            });
+            
+            // Modal close
+            document.getElementById('modalClose').addEventListener('click', closeModal);
+            document.getElementById('modalCancel').addEventListener('click', closeModal);
+            
+            // Close modal on outside click
+            document.getElementById('taskModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+            
+            // Task form submit
+            document.getElementById('taskForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('taskTitleInput').value;
+                const subject = document.getElementById('taskSubjectInput').value;
+                const dueDate = document.getElementById('taskDueInput').value;
+                const status = document.getElementById('taskStatusInput').value;
+                const editId = document.getElementById('editTaskId').value;
+                
+                if (!title.trim()) {
+                    alert('Please enter a task title');
+                    return;
+                }
+                
+                if (editId) {
+                    updateTask(parseInt(editId), title, subject, dueDate, status);
+                } else {
+                    addTask(title, subject, dueDate, status);
+                }
+                
+                closeModal();
+            });
+            
+            // Search
+            document.getElementById('searchInput').addEventListener('input', function() {
+                renderTasks();
+            });
+            
+            // Filter button (cycle through filters)
+            document.getElementById('filterBtn').addEventListener('click', function() {
+                const filters = ['all', 'pending', 'in-progress', 'completed'];
+                const currentIndex = filters.indexOf(currentFilter);
+                const nextIndex = (currentIndex + 1) % filters.length;
+                currentFilter = filters[nextIndex];
+                
+                const labels = {
+                    'all': 'All',
+                    'pending': 'Pending',
+                    'in-progress': 'In Progress',
+                    'completed': 'Completed'
+                };
+                
+                this.innerHTML = `<i class="fas fa-sliders"></i> ${labels[currentFilter]}`;
+                renderTasks();
+            });
+            
+            // Sort button
+            document.getElementById('sortBtn').addEventListener('click', function() {
+                tasks.sort((a, b) => {
+                    if (a.status === 'completed' && b.status !== 'completed') return 1;
+                    if (b.status === 'completed' && a.status !== 'completed') return -1;
+                    if (a.dueDate && b.dueDate) {
+                        return new Date(a.dueDate) - new Date(b.dueDate);
+                    }
+                    return 0;
+                });
+                renderAll();
+                this.innerHTML = `<i class="fas fa-arrow-down-wide-short"></i>`;
+                setTimeout(() => {
+                    this.innerHTML = `<i class="fas fa-arrow-up-wide-short"></i>`;
+                }, 1000);
+            });
+            
+            // View all tasks
+            document.getElementById('viewAllTasks').addEventListener('click', function() {
+                currentFilter = 'all';
+                document.getElementById('filterBtn').innerHTML = `<i class="fas fa-sliders"></i> All`;
+                document.getElementById('searchInput').value = '';
+                renderTasks();
+            });
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    alert('Logging out... (redirect to login page)');
+                    // In a real app: window.location.href = 'login.html';
+                }
+            });
+            
+            // Quick actions
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                const data = JSON.stringify(tasks, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `tasks-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+            
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            document.getElementById('shareBtn').addEventListener('click', function() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'My Tasks',
+                        text: `I have ${tasks.length} tasks in my Student Task Manager`,
+                        url: window.location.href
+                    }).catch(() => {});
+                } else {
+                    alert('Share feature not available on this browser');
+                }
+            });
+            
+            // Update last sync time
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('lastSync').textContent = 'just now';
+            }, 30000);
+        });
+
+        // ============================================
+        // RENDER ALL
+        // ============================================
+        function renderAll() {
+            renderTasks();
+            renderUpcoming();
+        }
+    </script>
+</body>
+</html>
